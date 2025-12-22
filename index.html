@@ -8,196 +8,317 @@
     <!-- 引入 Bootstrap 5.3 CDN CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     
-    <!-- 引入 Google Fonts: Inter 和 Noto Sans TC (中文) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- 引入 Font Awesome 圖示庫 -->
+    <!-- 引入 Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             --bs-primary: #3b82f6; 
-            --bs-secondary: #1d4ed8; 
-            --bs-accent: #fb923c; 
             --bs-body-bg: #f9fafb; 
-            --bs-body-color: #374151; 
         }
         body {
             background-color: var(--bs-body-bg);
-            color: var(--bs-body-color);
             scroll-behavior: smooth; 
         }
-        .image-placeholder {
-            background-color: #e5e7eb; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #6b7280;
-            border-radius: 1rem;
-            object-fit: cover;
-            min-height: 200px;
-        }
-        .card {
-            transition: transform 0.3s ease;
+        .portfolio-card {
             border: none;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        .card:hover {
+        .portfolio-card:hover {
             transform: translateY(-5px);
+        }
+        /* 遊戲畫布樣式 */
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #2d3436;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background-color: #000;
+        }
+        .game-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
     <div id="top"></div>
 
-    <!-- 導航欄 (Navbar) -->
-    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-white shadow-lg">
-        <div class="container-fluid container-lg px-4">
-            <a class="navbar-brand text-primary fw-bolder fs-4" href="#top">
-                陳均睿's Blog
-            </a>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-white shadow-sm">
+        <div class="container-lg px-4">
+            <a class="navbar-brand text-primary fw-bold fs-4" href="#top">陳均睿's Blog</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link me-lg-3 fw-semibold text-primary" href="#top">首頁</a></li>
-                    <li class="nav-item"><a class="nav-link text-gray-600 me-lg-3" href="#about">關於我</a></li>
-                    <li class="nav-item"><a class="nav-link text-gray-600 me-lg-3" href="#portfolio">專案/作品集</a></li>
-                    <li class="nav-item"><a class="nav-link text-gray-600 me-lg-3" href="#others">其他....</a></li>
-                    <li class="nav-item"><a class="btn btn-primary rounded-pill px-4" href="#contact">聯絡我</a></li>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link fw-semibold text-primary" href="#top">首頁</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">關於我</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#portfolio">專案/作品集</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#others">其他....</a></li>
+                    <li class="nav-item ms-lg-3"><a class="btn btn-primary rounded-pill px-4" href="#contact">聯絡我</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <main class="py-5">
-        <div class="container-lg px-4">
-        
-            <!-- 英雄區 (Hero Section) -->
-            <section class="text-center mb-5">
-                <h1 class="display-4 fw-bolder text-dark mb-3">
-                    陳均睿 的 <span class="text-primary">數位創作</span> 部落格
-                </h1>
-                <p class="lead text-muted mx-auto" style="max-width: 800px;">
-                    分享我在學習 AI 應用與網站開發過程中的專案與心得。
-                </p>
-            </section>
+    <main class="container-lg px-4 py-5">
+        <!-- 標題區 -->
+        <header class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-dark">陳均睿 的 <span class="text-primary">數位創作</span> 展演</h1>
+            <p class="text-muted">本網頁展示 AI 輔助開發、影音創作與網頁設計之成果。</p>
+        </header>
 
-            <!-- 關於我 (About Section) -->
-            <section id="about" class="bg-white p-4 p-sm-5 rounded-4 shadow mb-5">
-                <h2 class="fs-3 fw-bold text-dark border-bottom border-primary border-3 pb-2 mb-4 d-inline-block">關於我</h2>
-                <div class="row align-items-center">
-                    <div class="col-12 col-md-4 mb-4 mb-md-0 text-center">
-                        <div class="image-placeholder mx-auto rounded-circle mb-3" style="width: 150px; height: 150px;">照片</div>
-                        <h3 class="fs-4 fw-semibold text-dark mb-1">陳均睿</h3>
-                        <p class="text-primary fw-medium">國立台北教育大學資訊科學系</p>
+        <!-- 關於我 -->
+        <section id="about" class="portfolio-card p-4 p-md-5 mb-5">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center mb-4 mb-md-0">
+                    <div class="bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 160px; height: 160px; border: 4px solid var(--bs-primary);">
+                        <span class="text-muted small">個人照片</span>
                     </div>
-                    <div class="col-12 col-md-8">
-                        <div class="fs-5 lh-base">
-                            <p>我目前就讀於國立台北教育大學資訊科學系大二。熱衷於探索人工智慧的各種可能性，並致力於將 AI 融入創意作品中。</p>
-                            <p>愛好旅行、音樂與運動，並享受透過程式碼與數位工具實踐想法的過程。</p>
+                    <h2 class="mt-3 h4 fw-bold">陳均睿</h2>
+                    <p class="text-primary">國立台北教育大學 資科學系</p>
+                </div>
+                <div class="col-md-8">
+                    <h3 class="h5 fw-bold border-start border-primary border-4 ps-3 mb-3">個人簡介</h3>
+                    <p class="lead fs-6">目前就讀大二，致力於將 AI 轉化為實用的數位工具。我不僅學習程式邏輯，更嘗試利用語言模型優化開發流程，從遊戲設計到多媒體創作都是我的實踐領域。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 專案/作品集 -->
+        <section id="portfolio" class="mb-5">
+            <h2 class="h3 fw-bold mb-4"><i class="fas fa-layer-group text-primary me-2"></i>專案/作品集</h2>
+            
+            <div class="row g-4">
+                <!-- 嵌入作品 1: 貪吃蛇遊戲 -->
+                <div class="col-lg-6">
+                    <div class="portfolio-card h-100 p-4">
+                        <h4 class="fw-bold mb-3"><i class="fas fa-gamepad text-success me-2"></i>AI 輔助開發：經典貪吃蛇</h4>
+                        <p class="text-muted small">點擊下方按鈕即可在瀏覽器中直接遊玩。使用鍵盤方向鍵或 WASD 操控蛇的移動。</p>
+                        
+                        <div id="game-container">
+                            <canvas id="snakeGame" width="400" height="400"></canvas>
+                            <div id="game-start-overlay" class="game-overlay">
+                                <button class="btn btn-success btn-lg px-4" onclick="startGame()">開始遊戲</button>
+                                <p class="mt-2 small">使用方向鍵或 WASD 操作</p>
+                            </div>
+                            <div id="game-over-overlay" class="game-overlay d-none">
+                                <h3 class="text-danger">遊戲結束</h3>
+                                <p id="final-score">得分: 0</p>
+                                <button class="btn btn-primary" onclick="startGame()">再玩一次</button>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <span class="badge bg-dark">當前得分: <span id="current-score">0</span></span>
                         </div>
                     </div>
                 </div>
-            </section>
-            
-            <!-- 專案/作品集 (Portfolio Section) -->
-            <section id="portfolio" class="p-4 p-sm-5 bg-white rounded-4 shadow mb-5">
-                <h2 class="fs-3 fw-bold text-dark border-bottom border-primary border-3 pb-2 mb-4 d-inline-block">專案/作品集</h2>
-                <p class="lead text-muted mb-4">這裡展示了本學期我所完成的多樣化 AI 創作專案。</p>
 
-                <div class="row g-4">
-                    <!-- 作品 1: 星系幻夢 -->
-                    <div class="col-12 mb-4">
-                        <div class="card shadow-sm p-4 bg-light">
-                            <div class="row g-4 align-items-center">
-                                <div class="col-md-5">
-                                    <div class="image-placeholder w-100" style="height: 300px;">【星系幻夢】作品圖</div>
+                <!-- 嵌入作品 2: YouTube 影片 (已優化嵌入代碼) -->
+                <div class="col-lg-6">
+                    <div class="portfolio-card h-100 p-4">
+                        <h4 class="fw-bold mb-3"><i class="fab fa-youtube text-danger me-2"></i>AI 影音作品：MV 展演</h4>
+                        <p class="text-muted small">此作品結合了 Suno AI 生成音樂與視覺合成技術。影片已設定為公開並允許嵌入。</p>
+                        
+                        <div class="ratio ratio-16x9 rounded shadow-sm overflow-hidden mb-3 bg-black">
+                            <iframe 
+                                src="https://www.youtube.com/embed/w2AkjusmJso" 
+                                title="YouTube video player" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        
+                        <p class="mt-3 small text-secondary italic">技術：Suno AI (音樂) + 影像合成。展示了 AI 在藝術與多媒體創作上的潛力。</p>
+                        <div class="text-center">
+                            <a href="https://youtu.be/w2AkjusmJso" target="_blank" class="btn btn-outline-danger btn-sm rounded-pill">
+                                <i class="fas fa-external-link-alt me-1"></i> 在 YouTube 開啟觀看
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 作品 3: 圖片專案 -->
+                <div class="col-12">
+                    <div class="portfolio-card p-4 bg-light">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3 mb-md-0 text-center">
+                                <div class="bg-secondary rounded text-white d-flex align-items-center justify-content-center shadow-sm" style="height: 250px; background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <span class="fw-bold"></span>
                                 </div>
-                                <div class="col-md-7">
-                                    <h3 class="fs-4 fw-bold">1. AI 圖片創作：【星系幻夢】</h3>
-                                    <p class="text-muted">運用 Midjourney/DALL-E 生成的外星思鄉飲品視覺專案。</p>
-                                    <div class="border-start border-primary border-4 ps-3 mb-3 italic">
-                                        「這不只是一杯飲料，更是來自遙遠家鄉的呼喚...」
-                                    </div>
-                                    <p class="small text-secondary">技術重點：提示詞工程 (Prompt Engineering)、視覺風格一致性調整。</p>
-                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="fw-bold">AI 視覺專案：【星系幻夢】</h4>
+                                <p>利用提示詞工程 (Prompt Engineering) 生成的虛構概念產品設計。此作品強調外星異地文化色彩與質感，展現了精確控制生成式 AI 繪圖的能力。</p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 作品 2: 貪吃蛇遊戲實作 (更新項目) -->
-                    <div class="col-md-6">
-                        <div class="card h-100 shadow-sm p-4">
-                            <h3 class="fs-5 fw-bold"><i class="fas fa-gamepad text-success me-2"></i>2. AI 輔助開發：經典貪吃蛇實作</h3>
-                            <p class="text-muted flex-grow-1">透過與 Gemini AI 協作，利用 JavaScript 與 Canvas 技術開發出的經典街機遊戲。展示了從邏輯構思到程式碼除錯的溝通歷程。</p>
-                            <a href="https://gemini.google.com/share/8ad38d543ccd" target="_blank" class="btn btn-outline-success mt-3">查看對話與遊戲邏輯</a>
-                        </div>
-                    </div>
-
-                    <!-- 作品 3: YouTube AI 音樂 -->
-                    <div class="col-md-6">
-                        <div class="card h-100 shadow-sm p-4">
-                            <h3 class="fs-5 fw-bold"><i class="fab fa-youtube text-danger me-2"></i>3. AI 影音創作：音樂錄影帶</h3>
-                            <p class="text-muted flex-grow-1">將 AI 生成音樂與視覺元素結合，製作成具備完整聽覺與視覺體驗的作品。</p>
-                            <a href="https://youtu.be/w2AkjusmJso?si=U_WVDpjRs6_DcmwU" target="_blank" class="btn btn-outline-danger mt-3">前往 YouTube 觀看</a>
-                        </div>
-                    </div>
                 </div>
-            </section>
-            
-            <!-- 其他.... (Others Section) -->
-            <section id="others" class="p-4 p-sm-5 bg-light rounded-4 shadow mb-5">
-                <h2 class="fs-3 fw-bold text-dark border-bottom border-secondary border-3 pb-2 mb-4 d-inline-block">其他....</h2>
-                
-                <div class="mb-5">
-                    <h3 class="fs-4 fw-bold text-dark mb-3">學經歷</h3>
-                    <div class="table-responsive">
-                        <table class="table table-hover bg-white border">
-                            <thead class="table-secondary">
-                                <tr><th>期間</th><th>單位</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>2024 - 至今</td><td>國立台北教育大學資訊科學系</td></tr>
-                                <tr><td>2021 - 2024</td><td>台北市立中崙高級中學</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            </div>
+        </section>
 
-                <div class="text-center">
-                    <h3 class="fs-4 fw-bold text-dark mb-3">Suno AI 音樂作品</h3>
-                    <a href="https://suno.com/s/5drUZ43RuFNEPH6R" target="_blank" class="btn btn-warning btn-lg rounded-pill shadow">
-                        <i class="fas fa-music me-2"></i> Whispers in the Trees 🎵
-                    </a>
-                </div>
-            </section>
-            
-            <!-- 聯絡我 (Contact Section) -->
-            <section id="contact" class="p-4 p-sm-5 bg-white rounded-4 shadow mb-5 text-center">
-                <h2 class="fs-3 fw-bold text-dark border-bottom border-primary border-3 pb-2 mb-4 d-inline-block">聯絡我</h2>
-                <p class="lead text-muted mb-4">期待與您的交流與合作。</p>
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="mailto:s111316025@stu.ntue.edu.tw" class="btn btn-lg btn-outline-primary rounded-pill">
-                        <i class="fas fa-envelope me-2"></i> s111316025@stu.ntue.edu.tw
-                    </a>
-                    <a href="https://github.com/jerry111316025" target="_blank" class="btn btn-lg btn-outline-dark rounded-pill">
-                        <i class="fab fa-github me-2"></i> GitHub
-                    </a>
-                </div>
-            </section>
+        <!-- 其他 -->
+        <section id="others" class="portfolio-card p-4 mb-5">
+            <h2 class="h4 fw-bold mb-4">學經歷與其他作品</h2>
+            <div class="table-responsive mb-4">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr><th>期間</th><th>內容</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>2024 - 至今</td><td>國立台北教育大學 資科學系</td></tr>
+                        <tr><td>2021 - 2024</td><td>台北市立中崙高級中學</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center py-3">
+                <a href="https://suno.com/s/5drUZ43RuFNEPH6R" target="_blank" class="btn btn-outline-dark rounded-pill">
+                    <i class="fas fa-music me-2"></i>更多 Suno AI 音樂連結
+                </a>
+            </div>
+        </section>
 
-        </div>
+        <!-- 聯絡我 -->
+        <section id="contact" class="text-center py-5">
+            <h2 class="h3 fw-bold mb-4">聯絡我</h2>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="mailto:s111316025@stu.ntue.edu.tw" class="btn btn-primary btn-lg rounded-pill px-4">
+                    <i class="fas fa-envelope me-2"></i>發送郵件
+                </a>
+                <a href="https://github.com/jerry111316025" target="_blank" class="btn btn-dark btn-lg rounded-pill px-4">
+                    <i class="fab fa-github me-2"></i>GitHub 檔案
+                </a>
+            </div>
+        </section>
     </main>
 
-    <footer class="bg-dark text-white py-4">
-        <div class="container-lg text-center">
-            <p class="mb-0 small">&copy; 2025 陳均睿. All Rights Reserved. 個人作品集網站 (website_CSS)</p>
-        </div>
+    <footer class="bg-white border-top py-4 text-center">
+        <p class="text-muted small mb-0">&copy; 2025 陳均睿. 專案代碼：website_CSS</p>
     </footer>
 
+    <!-- 遊戲邏輯腳本 -->
+    <script>
+        const canvas = document.getElementById('snakeGame');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('current-score');
+        const finalScoreText = document.getElementById('final-score');
+        const startOverlay = document.getElementById('game-start-overlay');
+        const overOverlay = document.getElementById('game-over-overlay');
+
+        const box = 20;
+        let snake, food, d, score, game;
+
+        function initGame() {
+            snake = [{ x: 9 * box, y: 10 * box }];
+            food = {
+                x: Math.floor(Math.random() * 19 + 1) * box,
+                y: Math.floor(Math.random() * 19 + 1) * box
+            };
+            score = 0;
+            d = "RIGHT";
+            scoreElement.innerHTML = score;
+        }
+
+        document.addEventListener("keydown", direction);
+        function direction(event) {
+            let key = event.keyCode;
+            if((key == 37 || key == 65) && d != "RIGHT") d = "LEFT";
+            else if((key == 38 || key == 87) && d != "DOWN") d = "UP";
+            else if((key == 39 || key == 68) && d != "LEFT") d = "RIGHT";
+            else if((key == 40 || key == 83) && d != "UP") d = "DOWN";
+            
+            // 防止頁面捲動
+            if([37, 38, 39, 40].includes(key)) event.preventDefault();
+        }
+
+        function collision(head, array) {
+            for(let i = 0; i < array.length; i++) {
+                if(head.x == array[i].x && head.y == array[i].y) return true;
+            }
+            return false;
+        }
+
+        function draw() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for(let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? "#3b82f6" : "#93c5fd";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            ctx.fillStyle = "#ef4444";
+            ctx.fillRect(food.x, food.y, box, box);
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if( d == "LEFT") snakeX -= box;
+            if( d == "UP") snakeY -= box;
+            if( d == "RIGHT") snakeX += box;
+            if( d == "DOWN") snakeY += box;
+
+            if(snakeX == food.x && snakeY == food.y) {
+                score++;
+                scoreElement.innerHTML = score;
+                food = {
+                    x: Math.floor(Math.random() * 19 + 1) * box,
+                    y: Math.floor(Math.random() * 19 + 1) * box
+                };
+            } else {
+                snake.pop();
+            }
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            if(snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+                gameOver();
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function startGame() {
+            startOverlay.classList.add('d-none');
+            overOverlay.classList.add('d-none');
+            initGame();
+            game = setInterval(draw, 100);
+        }
+
+        function gameOver() {
+            finalScoreText.innerHTML = "得分: " + score;
+            overOverlay.classList.remove('d-none');
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
